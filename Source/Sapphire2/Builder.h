@@ -19,7 +19,7 @@ class SAPPHIRE2_API ABuilder : public APawn
 	UPROPERTY(EditAnywhere)
 	class UStaticMesh* myMesh;
 
-	class UStaticMeshComponent* myBox;
+	class UStaticMeshComponent* myPlacement;
 
 	class UCameraComponent* myCamera;
 

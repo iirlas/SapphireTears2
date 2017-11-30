@@ -17,14 +17,20 @@ ABuilder::ABuilder()
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
+	// Create Root Component
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	// Create Floating Pawn Movement Component for spectator-like movement
 	myMovement = CreateDefaultSubobject<UPawnMovementComponent, UFloatingPawnMovement>(TEXT("Movement"));
 	myMovement->SetUpdatedComponent(RootComponent);
+	// Create Camera
 	myCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	myCamera->SetupAttachment(RootComponent);
 	myCamera->bUsePawnControlRotation = true;
-	myBox = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Box"));
-	myBox->bAbsoluteLocation = true;
+	// Create Static mesh to visualize placement
+	myPlacement = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Placement"));
+	myPlacement->bAbsoluteLocation = true;
+	myPlacement->SetOnlyOwnerSee(true); // Only visible to this actor
+	// Create 'Procedural' mesh component
 	myISMC = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("ISM"));
 	myISMC->bAbsoluteLocation = true;
 }
@@ -33,8 +39,8 @@ ABuilder::ABuilder()
 void ABuilder::BeginPlay()
 {
 	Super::BeginPlay();
-	myBox->SetStaticMesh(myMesh);
-	myBox->SetCollisionProfileName(TEXT("NoCollision"));
+	myPlacement->SetStaticMesh(myMesh);
+	myPlacement->SetCollisionProfileName(TEXT("NoCollision"));
 	myISMC->SetStaticMesh(myMesh);
 }
 
@@ -50,7 +56,7 @@ void ABuilder::Tick(float delta_time)
 	{
 		FHitResult hit_result;
 		FVector location = GetPlacementLocation(hit_result);
-		myBox->SetWorldLocation(location);
+		myPlacement->SetWorldLocation(location);
 	}
 }
 
